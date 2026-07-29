@@ -1,0 +1,22 @@
+Suggested full free stack
+
+  ┌───────────────┬─────────────────────┬──────────────────────────────────────────────────────────────────────┐
+  │     Layer     │       Choice        │                                 Why                                  │
+  ├───────────────┼─────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │ LLM           │ Groq (Llama 3.x)    │ fast, no card, predictable free limits                               │
+  ├───────────────┼─────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │ Vector DB     │ Chroma (local)      │ zero-friction, swap to Qdrant Cloud if you want a "real" deployed DB │
+  ├───────────────┼─────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │ Orchestration │ LangGraph           │ free, just a library                                                 │
+  ├───────────────┼─────────────────────┼──────────────────────────────────────────────────────────────────────┤
+  │ Hosting       │ Hugging Face Spaces │ free, easy demo link for your resume                                 │
+  └───────────────┴─────────────────────┴──────────────────────────────────────────────────────────────────────┘
+  
+  Caveats to plan around
+
+  - All of these are rate-limited, not unlimited — fine for demos/interviews, not for sustained heavy traffic. Don't design load tests around them.
+  - HF Spaces free CPU tier will feel slow for a multi-agent chain (multiple sequential LLM calls) — expect a few seconds per response, which is normal and fine for a demo.
+  - Google's Gemini free tier has reportedly had its quotas cut sharply (50–80%) in recent months, so it's less stable than Groq if you're relying on it for a live-linked demo.
+ 
+  This stack costs $0 end-to-end and is genuinely what a lot of people ship portfolio LLM projects on. Want me to scaffold the project structure (LangGraph agents + Chroma + Groq client) next?
+

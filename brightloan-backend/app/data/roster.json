@@ -1,0 +1,23 @@
+[
+  {
+    "id": "rep_001",
+    "name": "Priya Sharma",
+    "specialty": ["loan_process", "general_faq"],
+    "available_slots": ["Today 3:30 PM", "Today 5:00 PM", "Tomorrow 10:00 AM"],
+    "status": "active"
+  },
+  {
+    "id": "rep_002",
+    "name": "Arjun Mehta",
+    "specialty": ["offer_amount", "company_policy"],
+    "available_slots": ["Today 4:00 PM", "Tomorrow 11:30 AM"],
+    "status": "active"
+  },
+  {
+    "id": "rep_003",
+    "name": "Neha Kapoor",
+    "specialty": ["human_handoff_request", "account_specific"],
+    "available_slots": ["Today 2:00 PM", "Tomorrow 9:30 AM"],
+    "status": "active"
+  }
+]
