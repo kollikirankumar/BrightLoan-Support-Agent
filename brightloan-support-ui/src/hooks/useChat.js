@@ -2,15 +2,47 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { api } from '../api/client.js'
 
 const HISTORY_MESSAGES = 10 // last ~5 turns (user + assistant pairs)
+const MESSAGES_STORAGE_KEY = 'brightloan_chat_messages'
+
+function loadStoredMessages() {
+  try {
+    const raw = localStorage.getItem(MESSAGES_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+// Called from AuthContext's logout so signing out starts a genuinely
+// fresh chat next sign-in, instead of resurfacing the previous session's
+// conversation from localStorage.
+export function clearStoredMessages() {
+  try {
+    localStorage.removeItem(MESSAGES_STORAGE_KEY)
+  } catch {
+    // ignore — nothing to clear if storage isn't available
+  }
+}
 
 // v1 uses a single request/response call per turn. The backend's /chat
 // contract (see 01-architecture.md) supports streaming later — swapping
 // api.sendMessage for an EventSource/fetch-stream reader here is the only
 // change needed when that lands.
 export function useChat(userName, phoneNumber) {
-  const [messages, setMessages] = useState([])
+  // Initialized from localStorage so a page refresh doesn't wipe the
+  // conversation — same pattern as AuthContext's session persistence.
+  const [messages, setMessages] = useState(loadStoredMessages)
   const [isLoading, setIsLoading] = useState(false)
   const [loadingStage, setLoadingStage] = useState('')
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MESSAGES_STORAGE_KEY, JSON.stringify(messages))
+    } catch {
+      // localStorage unavailable (e.g. private browsing) — chat just
+      // won't survive a refresh; not worth failing the chat over.
+    }
+  }, [messages])
 
   // Ref instead of reading `messages` directly in sendMessage — avoids a
   // stale closure without needing `messages` in the callback's deps.
