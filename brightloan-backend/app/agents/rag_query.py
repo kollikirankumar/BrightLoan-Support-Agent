@@ -40,6 +40,11 @@ Response style:
 - Only use a numbered list if the user is specifically asking for an
   ordered, step-by-step process (e.g. "how do I apply"). Everything else
   should be prose, not a list.
+- If the user's question about the application process/steps doesn't say
+  whether they mean a personal loan or a business loan, and the context
+  contains steps for both, answer for both — clearly labeled ("For
+  personal loans: ... For business loans: ...") — instead of picking one
+  or asking a clarifying question.
 """
 
 
