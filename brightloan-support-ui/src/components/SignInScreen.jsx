@@ -41,10 +41,6 @@ export default function SignInScreen() {
         </div>
       ) : (
         <form onSubmit={handleGuestSubmit} className="space-y-3 text-left">
-          <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700 ring-1 ring-amber-100">
-            Google sign-in isn't configured yet. Using local dev sign-in —
-            enter your details to continue.
-          </p>
           <input
             type="text"
             value={name}

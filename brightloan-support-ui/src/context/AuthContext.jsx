@@ -1,10 +1,36 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { api } from '../api/client.js'
+import { clearStoredMessages } from '../hooks/useChat.js'
 
 const AuthContext = createContext(null)
 
+const STORAGE_KEY = 'brightloan_user'
+
+function loadStoredUser() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function persistUser(user) {
+  try {
+    if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
+    else localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // localStorage unavailable (e.g. private browsing) — session just
+    // won't survive a refresh; not worth failing sign-in over.
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  // Initialized from localStorage so a page refresh doesn't sign the
+  // user out — real session/auth (server-verified cookie) lands per
+  // 02-frontend-react-auth.md; this is the client-side equivalent for
+  // the current dev-mode sign-in.
+  const [user, setUser] = useState(loadStoredUser)
   const [authError, setAuthError] = useState(null)
 
   // Backend re-verifies the Google ID token server-side before creating
@@ -13,7 +39,9 @@ export function AuthProvider({ children }) {
     setAuthError(null)
     try {
       const { name, email } = await api.googleAuth(idToken)
-      setUser({ name, email })
+      const nextUser = { name, email }
+      setUser(nextUser)
+      persistUser(nextUser)
     } catch (err) {
       setAuthError('Sign-in failed. Please try again.')
       console.error(err)
@@ -26,7 +54,9 @@ export function AuthProvider({ children }) {
   // Swap SignInScreen back to Google-only once both are wired up.
   const loginAsGuest = useCallback(({ name, phone, email }) => {
     setAuthError(null)
-    setUser({ name, phone: phone || null, email: email || null })
+    const nextUser = { name, phone: phone || null, email: email || null }
+    setUser(nextUser)
+    persistUser(nextUser)
   }, [])
 
   const logout = useCallback(async () => {
@@ -36,6 +66,8 @@ export function AuthProvider({ children }) {
       // no backend to call yet in dev mode — clearing local state is enough
     } finally {
       setUser(null)
+      persistUser(null)
+      clearStoredMessages()
     }
   }, [])
 
