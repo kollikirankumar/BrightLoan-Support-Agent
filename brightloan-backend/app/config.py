@@ -15,6 +15,15 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 HANDOFF_FROM_EMAIL = os.getenv("HANDOFF_FROM_EMAIL", "onboarding@resend.dev")
 HANDOFF_NOTIFICATION_EMAIL = os.getenv("HANDOFF_NOTIFICATION_EMAIL")
 
+# Comma-separated list of allowed frontend origins for CORS. Defaults to
+# the Vite dev server; set to the deployed frontend's URL in production
+# (e.g. https://brightloan-support-ui.vercel.app).
+FRONTEND_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("FRONTEND_ORIGINS", "http://localhost:5173").split(",")
+    if origin.strip()
+]
+
 BACKEND_ROOT = Path(__file__).parent.parent
 
 if not GROQ_API_KEY:
