@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 HISTORY_TURNS = 5  # last 5 turns (~10 messages) — bounds token cost, oldest just fall off
 
+from .config import FRONTEND_ORIGINS
 from .graph import SUPPORT_GRAPH
 from .logging_config import log_request_separator, logger
 from .notifications import send_handoff_notification
@@ -19,7 +20,7 @@ app = FastAPI(title="Brightloan Support Backend")
 # Google-auth session verification lands per 02-frontend-react-auth.md.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=FRONTEND_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
