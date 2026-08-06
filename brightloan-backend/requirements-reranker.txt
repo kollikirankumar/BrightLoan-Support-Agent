@@ -1,0 +1,9 @@
+# Optional — only needed if app/agents/rag_query.py's USE_RERANKER is
+# flipped back to True. Installs sentence-transformers (and, transitively,
+# torch), which is why it's kept out of requirements.txt / the Docker
+# image: even just having it importable pulls torch into every process
+# via langchain_core's optional GPT2TokenizerFast import, adding ~350MB+
+# of memory that Render's free tier (512MB) can't afford.
+#
+# Install with: pip install -r requirements-reranker.txt
+sentence-transformers

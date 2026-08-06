@@ -7,4 +7,3 @@ chromadb
 python-dotenv
 pydantic
 resend
-sentence-transformers
