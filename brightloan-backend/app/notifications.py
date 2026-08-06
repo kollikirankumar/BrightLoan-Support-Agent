@@ -1,11 +1,9 @@
-import logging
 from typing import Optional
 
 import resend
 
 from .config import RESEND_API_KEY, HANDOFF_FROM_EMAIL, HANDOFF_NOTIFICATION_EMAIL
-
-logger = logging.getLogger(__name__)
+from .logging_config import logger
 
 resend.api_key = RESEND_API_KEY
 
@@ -30,7 +28,7 @@ def send_handoff_notification(
     phone_display = phone_number or "not provided"
 
     try:
-        resend.Emails.send({
+        result = resend.Emails.send({
             "from": HANDOFF_FROM_EMAIL,
             "to": [HANDOFF_NOTIFICATION_EMAIL],
             "subject": f"New sales lead: {user_name} ({phone_display})",
@@ -42,5 +40,6 @@ def send_handoff_notification(
                 f"<p><strong>Routed internally to:</strong> {rep_name} ({specialty})</p>"
             ),
         })
-    except Exception:
-        logger.exception("Failed to send handoff notification email.")
+        logger.info(f"Handoff notification email sent to {HANDOFF_NOTIFICATION_EMAIL} — id={result.get('id')}")
+    except Exception as e:
+        logger.exception(f"Failed to send handoff notification email: {e}")
