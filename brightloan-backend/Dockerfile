@@ -2,10 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# CPU-only torch first — avoids pulling multi-GB CUDA deps that
-# sentence-transformers would otherwise drag in by default.
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-
+# sentence-transformers/torch are deliberately NOT installed here — see
+# requirements-reranker.txt. The reranker is disabled (USE_RERANKER=False
+# in app/agents/rag_query.py) because Render's free tier (512MB) can't fit
+# torch alongside the rest of the stack. Keeping it out of the image also
+# avoids langchain_core's optional GPT2TokenizerFast import silently
+# pulling torch back in at startup.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -18,6 +20,9 @@ COPY app ./app
 ENV GROQ_API_KEY=docker-build-placeholder
 RUN python -m app.vectorstore.ingest
 
-EXPOSE 8000
+# 7860 is Hugging Face Spaces' expected default port for Docker Spaces.
+# Render sets $PORT itself (e.g. 10000), which always overrides this
+# fallback, so this change is safe for both platforms.
+EXPOSE 7860
 
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
